@@ -26,9 +26,9 @@
                 new Skill { Id = 2, Name = "Skill Two" });
 
             modelBuilder.Entity<Employee>().HasData(
-                new Employee { Id = 1, Name = "EmployeeOne", CompanyId = 1 },
-                new Employee { Id = 2, Name = "EmployeeTwo", CompanyId = 2 },
-                new Employee { Id = 3, Name = "EmployeeThree", CompanyId = 2 });
+                new Employee { Id = 1, Name = new PersonName("Employee", "One"), CompanyId = 1 },
+                new Employee { Id = 2, Name = new PersonName("Employee", "Two"), CompanyId = 2 },
+                new Employee { Id = 3, Name = new PersonName("Employee", "Three"), CompanyId = 2 });
 
             modelBuilder.Entity<EmployeeSkill>().HasData(
                 new EmployeeSkill { Id = 1, EmployeeId = 1, SkillId = 1 },

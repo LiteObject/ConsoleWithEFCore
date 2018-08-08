@@ -91,6 +91,11 @@ namespace ConsoleWithEFCore.DataStore
                 modelBuilder.Seed();
             }
 
+            // Owned type feature for value object
+            /* modelBuilder.Entity<Employee>().OwnsOne(e => e.Name); // Name_FirstName, Name_LastName */
+            modelBuilder.Entity<Employee>().OwnsOne(e => e.Name).Property(n => n.FirstName).HasColumnName("FirstName");
+            modelBuilder.Entity<Employee>().OwnsOne(e => e.Name).Property(n => n.LastName).HasColumnName("LastName");
+
             base.OnModelCreating(modelBuilder);
         }
     }
