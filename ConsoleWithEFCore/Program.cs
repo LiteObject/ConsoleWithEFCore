@@ -1,10 +1,9 @@
 ﻿namespace ConsoleWithEFCore
 {
     using System;
-    using System.Linq;
+    using System.Diagnostics;
 
     using ConsoleWithEFCore.DataStore;
-    using ConsoleWithEFCore.Services;
 
     /// <summary>
     /// The program.
@@ -19,12 +18,17 @@
         /// </param>
         private static void Main(string[] args)
         {
+            var stopWatch = new Stopwatch();
+            stopWatch.Start();
+
             using (var db = new EmployeeContext(true))
             {
                 db.Database.EnsureCreated();
+                db.ChangeTracker.DetectChanges();                
             }
 
-            Console.WriteLine("\nPress any key to exit.");
+            stopWatch.Stop();
+            Console.WriteLine($"\nPress any key to exit. Elapsed: {stopWatch.Elapsed} s.");
             Console.Read();
         }
 

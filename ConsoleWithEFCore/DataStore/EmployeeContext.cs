@@ -9,6 +9,9 @@
 
 namespace ConsoleWithEFCore.DataStore
 {
+    using System;
+    using System.Linq;
+
     using ConsoleWithEFCore.Extensions;
     using ConsoleWithEFCore.Models;
 
@@ -54,6 +57,27 @@ namespace ConsoleWithEFCore.DataStore
         /// </summary>
         public DbSet<Employee> Employees { get; set; }
 
+        /// <inheritdoc />
+        public override int SaveChanges()
+        {
+            this.ChangeTracker.DetectChanges();
+            var timestamp = DateTime.Now;
+
+            foreach (var entry in this.ChangeTracker.Entries().Where(e =>
+                (e.State == EntityState.Added || e.State == EntityState.Modified)
+                && !e.Metadata.IsOwned()))
+            {
+                entry.Property("Modified").CurrentValue = timestamp;
+
+                if (entry.State == EntityState.Added)
+                {
+                    entry.Property("Created").CurrentValue = timestamp;
+                }
+            }
+
+            return base.SaveChanges();
+        }
+
         /// <summary>
         /// The on configuring.
         /// </summary>
@@ -63,8 +87,11 @@ namespace ConsoleWithEFCore.DataStore
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseSqlServer(
+                //@"Server=localhost,1433;Database=ConsoleWithEFCore;User Id=sa;Password=Ul.123456;",
                 @"Server=(localdb)\mssqllocaldb;Database=ConsoleWithEFCore;Trusted_Connection=True;",
                 options => options.EnableRetryOnFailure()); // Connection Resiliency
+
+            optionsBuilder.EnableSensitiveDataLogging();
 
             optionsBuilder.UseLoggerFactory(
                 new LoggerFactory(
@@ -86,15 +113,16 @@ namespace ConsoleWithEFCore.DataStore
         /// </param>
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            if (this.seed)
-            {
-                modelBuilder.Seed();
-            }
 
             // Owned type feature for value object
             /* modelBuilder.Entity<Employee>().OwnsOne(e => e.Name); // Name_FirstName, Name_LastName */
             modelBuilder.Entity<Employee>().OwnsOne(e => e.Name).Property(n => n.FirstName).HasColumnName("FirstName");
             modelBuilder.Entity<Employee>().OwnsOne(e => e.Name).Property(n => n.LastName).HasColumnName("LastName");
+
+            if (this.seed)
+            {
+                modelBuilder.Seed();
+            }
 
             base.OnModelCreating(modelBuilder);
         }
