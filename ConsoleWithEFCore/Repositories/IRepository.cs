@@ -2,14 +2,12 @@
 using System.Collections.Generic;
 using System.Linq.Expressions;
 
-namespace ConsoleWithEFCore.Services
+namespace ConsoleWithEFCore.Repositories
 {
 	public interface IRepository<TEntity>
     {
 		IEnumerable<TEntity> GetAll();
 		TEntity Get<TKey>(TKey id);
-
-		IEnumerable<TEntity> FindBy(Expression<Func<TEntity, bool>> predicate);
-
-	}
+        IEnumerable<TEntity> FindBy(Expression<Func<TEntity, bool>> predicate);
+    }
 }

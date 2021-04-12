@@ -1,12 +1,10 @@
-﻿namespace ConsoleWithEFCore.Services
+﻿using System.Linq;
+using ConsoleWithEFCore.DataStore;
+using ConsoleWithEFCore.Models;
+using Microsoft.EntityFrameworkCore;
+
+namespace ConsoleWithEFCore.Repositories
 {
-    using System.Linq;
-
-    using ConsoleWithEFCore.DataStore;
-    using ConsoleWithEFCore.Models;
-
-    using Microsoft.EntityFrameworkCore;
-
     /// <summary>
     /// The employee repository.
     /// </summary>
