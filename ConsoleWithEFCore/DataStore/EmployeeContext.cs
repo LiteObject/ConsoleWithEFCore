@@ -1,13 +1,4 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="EmployeeContext.cs" company="LiteObject">
-//   
-// </copyright>
-// <summary>
-//   The employee context.
-// </summary>
-// --------------------------------------------------------------------------------------------------------------------
-
-namespace ConsoleWithEFCore.DataStore
+﻿namespace ConsoleWithEFCore.DataStore
 {
     using System;
     using System.Linq;
@@ -24,10 +15,6 @@ namespace ConsoleWithEFCore.DataStore
     /// </summary>
     public class EmployeeContext : DbContext
     {
-        /// <summary>
-        /// The seed.
-        /// </summary>
-        private readonly bool seed;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="EmployeeContext"/> class.
@@ -35,16 +22,9 @@ namespace ConsoleWithEFCore.DataStore
         public EmployeeContext()
         {
         }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="EmployeeContext"/> class.
-        /// </summary>
-        /// <param name="seed">
-        /// The seed.
-        /// </param>
-        public EmployeeContext(bool seed)
+        
+        public EmployeeContext(DbContextOptions<EmployeeContext> options) : base(options)
         {
-            this.seed = seed;
         }
 
         /// <summary>
@@ -92,17 +72,6 @@ namespace ConsoleWithEFCore.DataStore
                 options => options.EnableRetryOnFailure()); // Connection Resiliency
 
             optionsBuilder.EnableSensitiveDataLogging();
-
-            optionsBuilder.UseLoggerFactory(
-                new LoggerFactory(
-                    new[]
-                        {
-                            new ConsoleLoggerProvider(
-                                (category, level) =>
-                                    category == DbLoggerCategory.Database.Command.Name
-                                    && level == LogLevel.Information,
-                                true)
-                        }));
         }
 
         /// <summary>
@@ -119,10 +88,7 @@ namespace ConsoleWithEFCore.DataStore
             modelBuilder.Entity<Employee>().OwnsOne(e => e.Name).Property(n => n.FirstName).HasColumnName("FirstName");
             modelBuilder.Entity<Employee>().OwnsOne(e => e.Name).Property(n => n.LastName).HasColumnName("LastName");
 
-            if (this.seed)
-            {
-                modelBuilder.Seed();
-            }
+            modelBuilder.Seed();
 
             base.OnModelCreating(modelBuilder);
         }

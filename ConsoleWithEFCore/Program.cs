@@ -21,7 +21,7 @@
             var stopWatch = new Stopwatch();
             stopWatch.Start();
 
-            using (var db = new EmployeeContext(true))
+            using (var db = new EmployeeContext())
             {
                 db.Database.EnsureCreated();
                 db.ChangeTracker.DetectChanges();                
